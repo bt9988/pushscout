@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getNotificationById } from '@/lib/data';
 import { Notification } from '@/types';
-import { ArrowLeft, Heart, Eye, Share2, Clock, User } from 'lucide-react';
+import { ArrowLeft, Heart, Eye, Share2, Clock, User, Bell } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const Detail = () => {

@@ -21,7 +21,7 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Upload, Image as ImageIcon } from 'lucide-react';
+import { Upload, Image as ImageIcon, Bell } from 'lucide-react';
 import { industries, notificationTypes } from '@/lib/data';
 import { Industry, NotificationType } from '@/types';
 
