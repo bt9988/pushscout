@@ -22,8 +22,8 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Upload, Image as ImageIcon, Bell } from 'lucide-react';
-import { industries, notificationTypes } from '@/lib/data';
-import { Industry, NotificationType } from '@/types';
+import { industries, notificationTypes, mockNotifications } from '@/lib/data';
+import { Industry, NotificationType, Notification } from '@/types';
 
 const Submit = () => {
   const navigate = useNavigate();
@@ -95,16 +95,33 @@ const Submit = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
     try {
+      // Create a new notification object
+      const newNotification: Notification = {
+        id: `${mockNotifications.length + 1}`,
+        title: formData.title,
+        message: formData.message,
+        imageUrl: previewImage || "https://picsum.photos/seed/default/800/600",
+        retailer: formData.retailer,
+        industry: formData.industry,
+        type: formData.type,
+        submittedBy: formData.submittedBy || "Anonymous",
+        submittedAt: new Date(),
+        likes: 0,
+        views: 1
+      };
+      
+      // In a real app, we would make an API call here
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // For demo purposes, we'll navigate to the detail page with the new ID
       toast({
         title: "Successfully submitted!",
         description: "Your notification has been added to the gallery",
       });
       
-      // In a real app, we would navigate to the newly created notification
+      // In a real app with backend, we would redirect to the newly created notification
+      // For demo, we'll redirect to the home page
       navigate('/');
     } catch (error) {
       toast({
@@ -326,7 +343,7 @@ const Submit = () => {
             <div className="flex space-x-6">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</a>
               <a href="/submit" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Submit</a>
-              <a href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
+              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
             </div>
           </div>
           <div className="mt-8 text-center text-sm text-muted-foreground">
