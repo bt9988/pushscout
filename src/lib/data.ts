@@ -1,3 +1,4 @@
+
 import { Notification, Industry, NotificationType } from '@/types';
 
 export const mockNotifications: Notification[] = [
@@ -117,6 +118,16 @@ export const industries: Industry[] = [
   'entertainment',
   'education',
   'social media',
+  'fitness',
+  'beauty',
+  'automotive',
+  'real estate',
+  'gaming',
+  'utilities',
+  'non-profit',
+  'government',
+  'news',
+  'sports',
   'other'
 ];
 
@@ -125,7 +136,12 @@ export const notificationTypes: NotificationType[] = [
   'transactional',
   'engagement',
   'informational',
-  'update'
+  'update',
+  'reminder',
+  'feedback',
+  'alert',
+  'onboarding',
+  'achievement'
 ];
 
 export const getUniqueRetailers = (): string[] => {

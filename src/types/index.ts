@@ -1,5 +1,15 @@
 
-export type NotificationType = 'promotional' | 'transactional' | 'engagement' | 'informational' | 'update';
+export type NotificationType = 
+  'promotional' | 
+  'transactional' | 
+  'engagement' | 
+  'informational' | 
+  'update' |
+  'reminder' |
+  'feedback' |
+  'alert' |
+  'onboarding' |
+  'achievement';
 
 export type Industry = 
   'ecommerce' | 
@@ -11,6 +21,16 @@ export type Industry =
   'entertainment' | 
   'education' | 
   'social media' |
+  'fitness' | 
+  'beauty' | 
+  'automotive' | 
+  'real estate' | 
+  'gaming' | 
+  'utilities' | 
+  'non-profit' | 
+  'government' | 
+  'news' | 
+  'sports' |
   'other';
 
 export interface Notification {

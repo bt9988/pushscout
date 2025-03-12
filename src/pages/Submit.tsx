@@ -21,9 +21,11 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Upload, Image as ImageIcon, Bell } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { industries, notificationTypes, mockNotifications } from '@/lib/data';
 import { Industry, NotificationType, Notification } from '@/types';
+import ImageCropper from '@/components/ImageCropper';
+import RetailerAutocomplete from '@/components/RetailerAutocomplete';
 
 const Submit = () => {
   const navigate = useNavigate();
@@ -48,25 +50,12 @@ const Submit = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        toast({
-          title: "Image too large",
-          description: "Please select an image under 5MB",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleRetailerChange = (value: string) => {
+    setFormData(prev => ({ ...prev, retailer: value }));
+  };
+  
+  const handleImageChange = (croppedImage: string | null) => {
+    setPreviewImage(croppedImage);
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,59 +147,9 @@ const Submit = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                  {/* Image Upload */}
+                  {/* Image Upload with Cropper */}
                   <div className="md:col-span-2">
-                    <Label htmlFor="image" className="block mb-2">
-                      Notification Screenshot <span className="text-red-500">*</span>
-                    </Label>
-                    
-                    <div className="border-2 border-dashed rounded-lg p-6 border-muted-foreground/20 hover:border-muted-foreground/30 transition-colors">
-                      {previewImage ? (
-                        <div className="relative">
-                          <img 
-                            src={previewImage} 
-                            alt="Notification preview" 
-                            className="max-h-60 mx-auto rounded-md object-contain"
-                          />
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            className="mt-4"
-                            onClick={() => setPreviewImage(null)}
-                          >
-                            Change Image
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center py-4">
-                          <div className="mb-4 rounded-full bg-background p-3">
-                            <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                          </div>
-                          <p className="mb-2 text-sm font-medium">
-                            Drag and drop or click to upload
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            PNG, JPG or WEBP (max. 5MB)
-                          </p>
-                          <Input 
-                            id="image"
-                            type="file" 
-                            accept="image/*"
-                            className="hidden" 
-                            onChange={handleImageChange}
-                          />
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            className="mt-4"
-                            onClick={() => document.getElementById('image')?.click()}
-                          >
-                            <Upload className="h-4 w-4 mr-2" />
-                            Select Image
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                    <ImageCropper onImageChange={handleImageChange} />
                   </div>
                   
                   {/* Title & Message */}
@@ -245,15 +184,10 @@ const Submit = () => {
                   
                   {/* Retailer & Industry */}
                   <div>
-                    <Label htmlFor="retailer" className="block mb-2">
-                      Retailer / Company <span className="text-red-500">*</span>
-                    </Label>
-                    <Input 
-                      id="retailer"
-                      name="retailer"
-                      placeholder="e.g. Amazon, Netflix"
+                    <RetailerAutocomplete 
                       value={formData.retailer}
-                      onChange={handleInputChange}
+                      onChange={handleRetailerChange}
+                      required={true}
                     />
                   </div>
                   
