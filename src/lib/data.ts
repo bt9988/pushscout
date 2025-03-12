@@ -1,11 +1,10 @@
-
 import { Notification, Industry, NotificationType } from '@/types';
 
 export const mockNotifications: Notification[] = [
   {
     id: '1',
     title: 'Flash Sale',
-    message: 'Limited time! 50% off all summer styles. Shop now before they're gone!',
+    message: "Limited time! 50% off all summer styles. Shop now before they're gone!",
     imageUrl: 'https://picsum.photos/seed/n1/800/600',
     retailer: 'Zara',
     industry: 'ecommerce',
