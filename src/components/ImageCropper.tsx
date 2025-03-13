@@ -196,6 +196,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
                   src={upImg} 
                   onLoad={onImageLoaded}
                   className="max-w-full max-h-[400px] object-contain"
+                  alt="Original notification screenshot"
                 />
               </ReactCrop>
             </div>
