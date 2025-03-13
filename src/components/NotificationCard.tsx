@@ -53,7 +53,7 @@ const NotificationCard = ({ notification, priority = 'standard' }: NotificationC
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`relative overflow-hidden bg-gray-100 ${
-        priority === 'featured' ? 'aspect-[4/3]' : 'aspect-[3/2]'
+        priority === 'featured' ? 'aspect-[16/7]' : 'aspect-[16/8]'
       }`}>
         <div className={`absolute inset-0 bg-gradient-to-t from-black/10 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
           isHovered ? 'opacity-100' : 'opacity-0'
