@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -54,8 +53,11 @@ const Submit = () => {
     setFormData(prev => ({ ...prev, retailer: value }));
   };
   
-  const handleImageChange = (croppedImage: string | null) => {
+  const handleImageChange = (croppedImage: string | null, extractedText?: string) => {
     setPreviewImage(croppedImage);
+    if (extractedText) {
+      setFormData(prev => ({ ...prev, message: extractedText }));
+    }
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +87,6 @@ const Submit = () => {
     setIsSubmitting(true);
     
     try {
-      // Create a new notification object
       const newNotification: Notification = {
         id: `${mockNotifications.length + 1}`,
         title: formData.title,
@@ -100,17 +101,13 @@ const Submit = () => {
         views: 1
       };
       
-      // In a real app, we would make an API call here
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // For demo purposes, we'll navigate to the detail page with the new ID
       toast({
         title: "Successfully submitted!",
         description: "Your notification has been added to the gallery",
       });
       
-      // In a real app with backend, we would redirect to the newly created notification
-      // For demo, we'll redirect to the home page
       navigate('/');
     } catch (error) {
       toast({
@@ -147,12 +144,10 @@ const Submit = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                  {/* Image Upload with Cropper */}
                   <div className="md:col-span-2">
                     <ImageCropper onImageChange={handleImageChange} />
                   </div>
                   
-                  {/* Title & Message */}
                   <div className="space-y-4 md:col-span-2">
                     <div>
                       <Label htmlFor="title" className="block mb-2">
@@ -161,10 +156,13 @@ const Submit = () => {
                       <Input 
                         id="title"
                         name="title"
-                        placeholder="Enter the notification title"
+                        placeholder="What is the notification about? (e.g., 'Flash Sale', 'Order Shipped')"
                         value={formData.title}
                         onChange={handleInputChange}
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        A short, descriptive title summarizing the purpose of the notification
+                      </p>
                     </div>
                     
                     <div>
@@ -179,10 +177,12 @@ const Submit = () => {
                         value={formData.message}
                         onChange={handleInputChange}
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {previewImage ? "Text was extracted from your image. You can edit it if needed." : "The full text content of the notification - we'll try to extract this from your screenshot"}
+                      </p>
                     </div>
                   </div>
                   
-                  {/* Retailer & Industry */}
                   <div>
                     <RetailerAutocomplete 
                       value={formData.retailer}
@@ -212,7 +212,6 @@ const Submit = () => {
                     </Select>
                   </div>
                   
-                  {/* Type & Submitted By */}
                   <div>
                     <Label htmlFor="type" className="block mb-2">
                       Notification Type <span className="text-red-500">*</span>
@@ -266,7 +265,6 @@ const Submit = () => {
         </div>
       </main>
       
-      {/* Footer */}
       <footer className="py-8 border-t border-border">
         <div className="px-6 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">

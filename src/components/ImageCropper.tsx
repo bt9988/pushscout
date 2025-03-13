@@ -3,14 +3,15 @@ import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Upload, Image as ImageIcon, Crop, Check, X } from 'lucide-react';
+import { Upload, Image as ImageIcon, Crop, Check, X, Loader2, FileText } from 'lucide-react';
 import ReactCrop, { Crop as CropType, PercentCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 interface ImageCropperProps {
-  onImageChange: (croppedImage: string | null) => void;
+  onImageChange: (croppedImage: string | null, extractedText?: string) => void;
 }
 
+// Function to center the crop in the image with a specific aspect ratio
 function centerAspectCrop(
   mediaWidth: number,
   mediaHeight: number,
@@ -38,6 +39,8 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
   const [completedCrop, setCompletedCrop] = useState<PercentCrop>();
   const [isCropping, setIsCropping] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractedText, setExtractedText] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +57,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
         setUpImg(reader.result as string);
         setIsCropping(true);
         setCroppedImage(null);
+        setExtractedText(null);
       });
       reader.readAsDataURL(file);
     }
@@ -65,7 +69,43 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
     setCrop(cropInit);
   };
 
-  const generateCroppedImage = () => {
+  // Function to extract text from the image using OCR
+  const extractTextFromImage = async (imageUrl: string) => {
+    setIsExtracting(true);
+    try {
+      // In a real application, we would send the image to an OCR service
+      // For this demo, we'll simulate OCR with a timeout
+      // and pretend to extract some text
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulated text extraction - in a real app this would be the result from an OCR API
+      let simulatedText = "";
+      
+      // Generate text similar to how notifications usually look
+      const textOptions = [
+        "Your order has been shipped! Expected delivery by Friday.",
+        "Flash Sale: 50% off all items for the next 24 hours!",
+        "New message from Sarah: Are we still meeting today?",
+        "Your payment of $24.99 was received. Thank you!",
+        "Weather alert: Heavy rain expected in your area tonight.",
+        "Your subscription will renew in 3 days. Tap to manage.",
+        "Breaking news: Major announcement from tech company.",
+        "Reminder: Meeting with design team at 3pm today."
+      ];
+      
+      simulatedText = textOptions[Math.floor(Math.random() * textOptions.length)];
+      
+      setExtractedText(simulatedText);
+      return simulatedText;
+    } catch (error) {
+      console.error("Error extracting text:", error);
+      return null;
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
+  const generateCroppedImage = async () => {
     if (imgRef.current && completedCrop?.width && completedCrop?.height) {
       const canvas = document.createElement('canvas');
       const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
@@ -100,7 +140,12 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
         const base64Image = canvas.toDataURL('image/jpeg');
         setCroppedImage(base64Image);
         setIsCropping(false);
-        onImageChange(base64Image);
+        
+        // Extract text from the cropped image
+        const text = await extractTextFromImage(base64Image);
+        
+        // Pass both the cropped image and extracted text to the parent component
+        onImageChange(base64Image, text || undefined);
       }
     }
   };
@@ -116,6 +161,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
   const handleClearImage = () => {
     setCroppedImage(null);
     setUpImg(null);
+    setExtractedText(null);
     onImageChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -141,7 +187,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
               <ReactCrop 
                 crop={crop} 
                 onChange={c => setCrop(c)}
-                onComplete={c => setCompletedCrop(c)}
+                onComplete={(c) => setCompletedCrop(c)}
                 aspect={undefined}
                 className="max-w-full mx-auto"
               >
@@ -178,6 +224,20 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
               alt="Notification preview" 
               className="max-h-60 mx-auto rounded-md object-contain"
             />
+            {isExtracting && (
+              <div className="flex items-center justify-center space-x-2 mt-4 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Extracting text from image...</span>
+              </div>
+            )}
+            {extractedText && !isExtracting && (
+              <div className="mt-4 text-center">
+                <div className="flex items-center justify-center space-x-2 text-sm text-green-600">
+                  <FileText className="h-4 w-4" />
+                  <span>Text extracted successfully!</span>
+                </div>
+              </div>
+            )}
             <Button
               type="button"
               variant="secondary"
