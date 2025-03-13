@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
@@ -21,11 +20,9 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
-  // Simulate loading data
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       setNotifications(mockNotifications);
       setRetailers(getUniqueRetailers());
@@ -35,7 +32,6 @@ const Index = () => {
     loadData();
   }, []);
 
-  // Filter notifications based on selected filters
   useEffect(() => {
     let result = [...notifications];
     
@@ -69,10 +65,8 @@ const Index = () => {
     setFilteredNotifications(result);
   }, [notifications, selectedRetailers, selectedIndustries, selectedTypes, searchTerm]);
 
-  // Get featured notification
   const featuredNotification = notifications.length > 0 ? notifications[0] : null;
   
-  // Remove featured from the rest of the notifications
   const restNotifications = filteredNotifications.filter(
     notification => notification.id !== featuredNotification?.id
   );
@@ -82,13 +76,8 @@ const Index = () => {
       <Header />
       
       <main className="flex-1 pt-24 pb-12">
-        {/* Hero Section */}
         <section className="px-6 mb-16 max-w-7xl mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center p-1 mb-6 rounded-full bg-primary/10 text-primary text-sm font-medium animate-fade-in">
-              <Bell className="w-4 h-4 mr-1" />
-              <span>Push Notification Gallery</span>
-            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-balance animate-slide-up">
               Discover inspiring mobile <span className="text-primary">notifications</span>
             </h1>
@@ -113,7 +102,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Gallery Section */}
         <section id="gallery" className="px-6 max-w-7xl mx-auto">
           <FilterSection 
             retailers={retailers}
@@ -147,7 +135,6 @@ const Index = () => {
             </div>
           ) : (
             <div className="mt-8">
-              {/* Featured Notification */}
               {!searchTerm && selectedRetailers.length === 0 && 
                selectedIndustries.length === 0 && selectedTypes.length === 0 && 
                featuredNotification && (
@@ -157,7 +144,6 @@ const Index = () => {
                 </div>
               )}
               
-              {/* Notification Grid */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-6">
                   {filteredNotifications.length} Notification{filteredNotifications.length !== 1 ? 's' : ''}
@@ -176,13 +162,12 @@ const Index = () => {
         </section>
       </main>
       
-      {/* Footer */}
       <footer className="py-8 border-t border-border">
         <div className="px-6 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-1 mb-4 md:mb-0">
               <Bell className="w-5 h-5 text-primary" />
-              <span className="text-lg font-semibold">PushGallery</span>
+              <span className="text-lg font-semibold">PushScout</span>
             </div>
             <div className="flex space-x-6">
               <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
@@ -191,7 +176,7 @@ const Index = () => {
             </div>
           </div>
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} PushGallery. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} PushScout. All rights reserved.</p>
           </div>
         </div>
       </footer>

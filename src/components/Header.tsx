@@ -28,7 +28,7 @@ const Header = () => {
         <div className="flex items-center space-x-1">
           <Bell className="w-6 h-6 text-primary" />
           <Link to="/" className="text-xl font-semibold">
-            PushGallery
+            PushScout
           </Link>
         </div>
 
