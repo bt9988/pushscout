@@ -187,7 +187,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
               <ReactCrop 
                 crop={crop} 
                 onChange={c => setCrop(c)}
-                onComplete={(c) => setCompletedCrop(c)}
+                onComplete={(c) => setCompletedCrop(c as PercentCrop)}
                 aspect={undefined}
                 className="max-w-full mx-auto"
               >
