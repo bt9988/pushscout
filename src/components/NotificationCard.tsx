@@ -13,6 +13,7 @@ interface NotificationCardProps {
 
 const NotificationCard = ({ notification, priority = 'standard' }: NotificationCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const getTypeColor = (type: string) => {
@@ -59,25 +60,30 @@ const NotificationCard = ({ notification, priority = 'standard' }: NotificationC
           isHovered ? 'opacity-100' : 'opacity-0'
         }`} />
         
-        {!imageLoaded && (
+        {!imageLoaded && !imageError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
             <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
           </div>
         )}
         
-        <img
-          src={notification.imageUrl}
-          alt={notification.title}
-          className={`w-full h-full object-cover transition-transform duration-500 ${
-            isHovered ? 'scale-105' : 'scale-100'
-          } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-          onLoad={() => setImageLoaded(true)}
-          onError={(e) => {
-            // If image fails to load, set a placeholder or fallback
-            (e.target as HTMLImageElement).src = '/placeholder.svg';
-            setImageLoaded(true);
-          }}
-        />
+        {!imageError ? (
+          <img
+            src={notification.imageUrl}
+            alt={notification.title}
+            className={`w-full h-full object-cover transition-transform duration-500 ${
+              isHovered ? 'scale-105' : 'scale-100'
+            } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              setImageError(true);
+              setImageLoaded(true);
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-muted-foreground">
+            <p className="text-sm">Image not available</p>
+          </div>
+        )}
         
         <div className="absolute top-4 left-4 right-4 flex flex-wrap gap-2 z-20">
           <Badge className={`font-medium ${getTypeColor(notification.type)}`}>
