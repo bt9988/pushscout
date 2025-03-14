@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bell, Search, PlusCircle, Menu, X } from 'lucide-react';
+import { Bell, Search, PlusCircle, Menu, X, Binoculars } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
@@ -26,7 +26,10 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-1">
-          <Bell className="w-6 h-6 text-primary" />
+          <div className="relative w-6 h-6 text-primary">
+            <Binoculars className="w-6 h-6 absolute top-0 left-0" />
+            <Bell className="w-3 h-3 absolute bottom-0 right-0" />
+          </div>
           <Link to="/" className="text-xl font-semibold">
             PushScout
           </Link>

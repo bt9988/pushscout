@@ -72,6 +72,11 @@ const NotificationCard = ({ notification, priority = 'standard' }: NotificationC
             isHovered ? 'scale-105' : 'scale-100'
           } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={() => setImageLoaded(true)}
+          onError={(e) => {
+            // If image fails to load, set a placeholder or fallback
+            (e.target as HTMLImageElement).src = '/placeholder.svg';
+            setImageLoaded(true);
+          }}
         />
         
         <div className="absolute top-4 left-4 right-4 flex flex-wrap gap-2 z-20">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
@@ -65,12 +66,6 @@ const Index = () => {
     setFilteredNotifications(result);
   }, [notifications, selectedRetailers, selectedIndustries, selectedTypes, searchTerm]);
 
-  const featuredNotification = notifications.length > 0 ? notifications[0] : null;
-  
-  const restNotifications = filteredNotifications.filter(
-    notification => notification.id !== featuredNotification?.id
-  );
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -79,10 +74,10 @@ const Index = () => {
         <section className="px-6 mb-16 max-w-7xl mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-balance animate-slide-up">
-              Discover inspiring mobile <span className="text-primary">notifications</span>
+              Discover inspiring push <span className="text-primary">notifications</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '100ms' }}>
-              A community-driven gallery of push notification designs from top brands.
+              A community-driven gallery of push notification designs from top brands and apps.
               Filter by industry, retailer, or notification type.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
@@ -135,21 +130,12 @@ const Index = () => {
             </div>
           ) : (
             <div className="mt-8">
-              {!searchTerm && selectedRetailers.length === 0 && 
-               selectedIndustries.length === 0 && selectedTypes.length === 0 && 
-               featuredNotification && (
-                <div className="mb-12">
-                  <h2 className="text-xl font-semibold mb-6">Featured Notification</h2>
-                  <NotificationCard notification={featuredNotification} priority="featured" />
-                </div>
-              )}
-              
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-6">
                   {filteredNotifications.length} Notification{filteredNotifications.length !== 1 ? 's' : ''}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {restNotifications.map(notification => (
+                  {filteredNotifications.map(notification => (
                     <NotificationCard 
                       key={notification.id} 
                       notification={notification}
