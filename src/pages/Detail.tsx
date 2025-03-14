@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getNotificationById } from '@/lib/data';
 import { Notification } from '@/types';
-import { ArrowLeft, Heart, Eye, Share2, Clock, User, Bell } from 'lucide-react';
+import { ArrowLeft, Heart, Eye, Share2, Clock, User, Binoculars } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const Detail = () => {
@@ -57,6 +57,10 @@ const Detail = () => {
     
     loadNotification();
   }, [id, navigate, toast]);
+  
+  const handleBrandClick = (brand: string) => {
+    navigate(`/?brand=${brand}`);
+  };
   
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -175,7 +179,12 @@ const Detail = () => {
                   
                   <div className="p-6 mb-6 bg-secondary rounded-xl">
                     <div className="flex items-center mb-4">
-                      <h3 className="font-semibold">{notification.retailer}</h3>
+                      <button 
+                        onClick={() => handleBrandClick(notification.retailer)}
+                        className="font-semibold text-primary hover:underline focus:outline-none"
+                      >
+                        {notification.retailer}
+                      </button>
                     </div>
                     <p className="text-lg mb-6">{notification.message}</p>
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -229,8 +238,8 @@ const Detail = () => {
         <div className="px-6 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-1 mb-4 md:mb-0">
-              <Bell className="w-5 h-5 text-primary" />
-              <span className="text-lg font-semibold">PushGallery</span>
+              <Binoculars className="w-5 h-5 text-primary" />
+              <span className="text-lg font-semibold">PushScout</span>
             </div>
             <div className="flex space-x-6">
               <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
@@ -239,7 +248,7 @@ const Detail = () => {
             </div>
           </div>
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} PushGallery. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} PushScout. All rights reserved.</p>
           </div>
         </div>
       </footer>

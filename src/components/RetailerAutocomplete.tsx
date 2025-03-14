@@ -85,7 +85,7 @@ const RetailerAutocomplete = ({
   return (
     <div className="relative">
       <Label htmlFor="retailer" className="block mb-2">
-        Retailer / Company {required && <span className="text-red-500">*</span>}
+        Brand / Company {required && <span className="text-red-500">*</span>}
       </Label>
       <div className="relative">
         <Input

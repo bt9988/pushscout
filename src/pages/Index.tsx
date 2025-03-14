@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import NotificationCard from '@/components/NotificationCard';
 import FilterSection from '@/components/FilterSection';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Bell, Plus } from 'lucide-react';
+import { ArrowRight, Binoculars, Plus } from 'lucide-react';
 import { mockNotifications, getUniqueRetailers } from '@/lib/data';
 import { Industry, Notification, NotificationType } from '@/types';
 
@@ -20,6 +21,7 @@ const Index = () => {
   const [selectedTypes, setSelectedTypes] = useState<NotificationType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
+  const location = useLocation();
 
   useEffect(() => {
     const loadData = async () => {
@@ -32,6 +34,16 @@ const Index = () => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    // Check for brand parameter in URL
+    const params = new URLSearchParams(location.search);
+    const brandParam = params.get('brand');
+    
+    if (brandParam && retailers.includes(brandParam) && !selectedRetailers.includes(brandParam)) {
+      setSelectedRetailers([...selectedRetailers, brandParam]);
+    }
+  }, [location.search, retailers]);
 
   useEffect(() => {
     let result = [...notifications];
@@ -152,7 +164,7 @@ const Index = () => {
         <div className="px-6 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-1 mb-4 md:mb-0">
-              <Bell className="w-5 h-5 text-primary" />
+              <Binoculars className="w-5 h-5 text-primary" />
               <span className="text-lg font-semibold">PushScout</span>
             </div>
             <div className="flex space-x-6">

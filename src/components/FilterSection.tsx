@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -179,7 +178,7 @@ const FilterSection = ({
         <div className="mt-4 p-4 bg-secondary rounded-xl animate-slide-down">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <h3 className="font-medium mb-2">Retailers</h3>
+              <h3 className="font-medium mb-2">Brands</h3>
               <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-2">
                 {retailers.map(retailer => (
                   <button
