@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 const About = () => {
   const [name, setName] = useState('');
@@ -44,30 +45,14 @@ const About = () => {
             
             <div className="prose prose-lg max-w-none">
               <p>
-                At PushScout, we're passionate about creating exceptional customer experiences 
-                through thoughtful mobile engagement. We believe that push notifications are 
-                a powerful tool for connecting with users, but only when done right.
-              </p>
-              
-              <p>
-                Our mission is to gather and showcase outstanding examples of push notifications 
-                from top brands and applications across various industries. By curating this gallery, 
-                we aim to inspire app builders, marketers, product managers, and designers 
-                to create more effective, engaging, and respectful mobile communications.
-              </p>
-              
-              <p>
-                Whether you're looking to improve customer retention, boost engagement, or simply 
-                learn from the best in the business, PushScout is your resource for push notification 
-                inspiration and best practices.
-              </p>
-              
-              <p>
-                This community-driven platform allows professionals to submit, discover, and learn 
-                from real-world notification examples that drive results.
+                PushScout is a community-driven platform showcasing exceptional push notifications from leading brands and apps.
+                We believe that effective mobile engagement is essential for creating meaningful customer experiences.
+                Our goal is to inspire app builders, marketers, and designers with real-world examples that drive results.
               </p>
             </div>
           </section>
+          
+          <Separator className="my-8" />
           
           <section className="mb-16">
             <div className="bg-card rounded-xl p-8 border border-border">
