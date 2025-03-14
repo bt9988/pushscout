@@ -20,18 +20,57 @@ const About = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
     
-    toast({
-      title: "Message sent",
-      description: "Thanks for reaching out! We'll get back to you soon.",
-    });
+    // Create a FormData object to send email
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('message', message);
+    formData.append('recipient', 'b.tribbeck@gmail.com');
     
-    setName('');
-    setEmail('');
-    setMessage('');
-    setIsSubmitting(false);
+    try {
+      // Send the form data to the email service
+      const response = await fetch('https://formsubmit.co/b.tribbeck@gmail.com', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Message sent",
+          description: "Thanks for reaching out! We'll get back to you soon.",
+        });
+        
+        setName('');
+        setEmail('');
+        setMessage('');
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Failed to send message",
+        description: "There was an error sending your message. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

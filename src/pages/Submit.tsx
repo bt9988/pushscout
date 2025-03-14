@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -21,10 +22,10 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Bell } from 'lucide-react';
-import { industries, notificationTypes, mockNotifications } from '@/lib/data';
+import { industries, notificationTypes, mockNotifications, addNotification } from '@/lib/data';
 import { Industry, NotificationType, Notification } from '@/types';
 import ImageCropper from '@/components/ImageCropper';
-import RetailerAutocomplete from '@/components/RetailerAutocomplete';
+import BrandAutocomplete from '@/components/BrandAutocomplete';
 
 const Submit = () => {
   const navigate = useNavigate();
@@ -100,6 +101,9 @@ const Submit = () => {
         likes: 0,
         views: 1
       };
+      
+      // Add the notification to the mockNotifications array
+      addNotification(newNotification);
       
       await new Promise(resolve => setTimeout(resolve, 1500));
       
@@ -184,7 +188,7 @@ const Submit = () => {
                   </div>
                   
                   <div>
-                    <RetailerAutocomplete 
+                    <BrandAutocomplete 
                       value={formData.retailer}
                       onChange={handleRetailerChange}
                       required={true}
@@ -270,16 +274,16 @@ const Submit = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-1 mb-4 md:mb-0">
               <Bell className="w-5 h-5 text-primary" />
-              <span className="text-lg font-semibold">PushGallery</span>
+              <span className="text-lg font-semibold">PushScout</span>
             </div>
             <div className="flex space-x-6">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</a>
               <a href="/submit" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Submit</a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
+              <a href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
             </div>
           </div>
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} PushGallery. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} PushScout. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -1,7 +1,6 @@
-
 import { Notification, Industry, NotificationType } from '@/types';
 
-export const mockNotifications: Notification[] = [
+export let mockNotifications: Notification[] = [
   {
     id: '1',
     title: 'Flash Sale',
@@ -107,6 +106,46 @@ export const mockNotifications: Notification[] = [
     views: 1103
   }
 ];
+
+export const addNotification = (notification: Notification) => {
+  const newId = String(Math.max(...mockNotifications.map(n => parseInt(n.id))) + 1);
+  notification.id = newId;
+  
+  mockNotifications = [notification, ...mockNotifications];
+  
+  try {
+    const storedNotifications = localStorage.getItem('pushscout_notifications');
+    const notificationsArray = storedNotifications ? JSON.parse(storedNotifications) : [];
+    notificationsArray.push(notification);
+    localStorage.setItem('pushscout_notifications', JSON.stringify(notificationsArray));
+  } catch (error) {
+    console.error('Error saving notification to localStorage:', error);
+  }
+  
+  return notification;
+};
+
+export const loadStoredNotifications = () => {
+  try {
+    const storedNotifications = localStorage.getItem('pushscout_notifications');
+    if (storedNotifications) {
+      const parsedNotifications = JSON.parse(storedNotifications);
+      
+      const processedNotifications = parsedNotifications.map((notification: any) => ({
+        ...notification,
+        submittedAt: new Date(notification.submittedAt)
+      }));
+      
+      processedNotifications.forEach((notification: Notification) => {
+        if (!mockNotifications.some(n => n.id === notification.id)) {
+          mockNotifications.unshift(notification);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error loading notifications from localStorage:', error);
+  }
+};
 
 export const industries: Industry[] = [
   'ecommerce',
