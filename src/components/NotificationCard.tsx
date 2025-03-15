@@ -1,9 +1,9 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Notification } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Eye } from 'lucide-react';
+import { Heart, HeartFilled, Eye } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface NotificationCardProps {
@@ -15,6 +15,13 @@ const NotificationCard = ({ notification, priority = 'standard' }: NotificationC
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+
+  useEffect(() => {
+    // Check if user has already liked this notification
+    const likedNotifications = JSON.parse(localStorage.getItem('likedNotifications') || '[]');
+    setHasLiked(likedNotifications.includes(notification.id));
+  }, [notification.id]);
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -107,8 +114,12 @@ const NotificationCard = ({ notification, priority = 'standard' }: NotificationC
           <span className="font-medium">{notification.retailer}</span>
           
           <div className="flex items-center space-x-4 text-muted-foreground">
-            <div className="flex items-center">
-              <Heart className="w-3.5 h-3.5 mr-1" />
+            <div className={`flex items-center ${hasLiked ? 'text-red-500' : ''}`}>
+              {hasLiked ? (
+                <HeartFilled className="w-3.5 h-3.5 mr-1 fill-current" />
+              ) : (
+                <Heart className="w-3.5 h-3.5 mr-1" />
+              )}
               <span>{notification.likes}</span>
             </div>
             <div className="flex items-center">

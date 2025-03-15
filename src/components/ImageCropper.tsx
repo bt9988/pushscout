@@ -141,7 +141,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
         setCroppedImage(base64Image);
         setIsCropping(false);
         
-        // Extract text from the cropped image
+        // Extract text from the cropped image and ensure it's applied
         const text = await extractTextFromImage(base64Image);
         
         // Pass both the cropped image and extracted text to the parent component

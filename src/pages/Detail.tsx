@@ -5,9 +5,9 @@ import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getNotificationById } from '@/lib/data';
+import { getNotificationById, updateNotification } from '@/lib/data';
 import { Notification } from '@/types';
-import { ArrowLeft, Heart, Eye, Share2, Clock, User, Binoculars } from 'lucide-react';
+import { ArrowLeft, Heart, HeartFilled, Eye, Share2, Clock, User, Binoculars } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const Detail = () => {
@@ -17,6 +17,7 @@ const Detail = () => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
   
   useEffect(() => {
     const loadNotification = async () => {
@@ -43,7 +44,18 @@ const Detail = () => {
           return;
         }
         
-        setNotification(data);
+        // Check if user has already liked this notification
+        const likedNotifications = JSON.parse(localStorage.getItem('likedNotifications') || '[]');
+        setHasLiked(likedNotifications.includes(id));
+        
+        // Increment view count
+        if (data) {
+          const updatedNotification = { ...data, views: data.views + 1 };
+          updateNotification(updatedNotification);
+          setNotification(updatedNotification);
+        } else {
+          setNotification(data);
+        }
       } catch (error) {
         toast({
           title: "Error loading notification",
@@ -57,6 +69,57 @@ const Detail = () => {
     
     loadNotification();
   }, [id, navigate, toast]);
+  
+  const handleLike = () => {
+    if (!notification) return;
+    
+    // Update the liked status in localStorage
+    const likedNotifications = JSON.parse(localStorage.getItem('likedNotifications') || '[]');
+    
+    if (hasLiked) {
+      // Unlike
+      const updatedLikes = likedNotifications.filter((likeId: string) => likeId !== id);
+      localStorage.setItem('likedNotifications', JSON.stringify(updatedLikes));
+      
+      // Update notification in state and storage
+      const updatedNotification = { ...notification, likes: notification.likes - 1 };
+      updateNotification(updatedNotification);
+      setNotification(updatedNotification);
+      setHasLiked(false);
+      
+      // Track unlike event in Google Analytics
+      window.gtag?.('event', 'unlike_notification', {
+        notification_id: id,
+        notification_title: notification.title
+      });
+      
+      toast({
+        title: "Removed like",
+        description: "You've removed your like from this notification",
+      });
+    } else {
+      // Like
+      likedNotifications.push(id);
+      localStorage.setItem('likedNotifications', JSON.stringify(likedNotifications));
+      
+      // Update notification in state and storage
+      const updatedNotification = { ...notification, likes: notification.likes + 1 };
+      updateNotification(updatedNotification);
+      setNotification(updatedNotification);
+      setHasLiked(true);
+      
+      // Track like event in Google Analytics
+      window.gtag?.('event', 'like_notification', {
+        notification_id: id,
+        notification_title: notification.title
+      });
+      
+      toast({
+        title: "Added like",
+        description: "You've liked this notification",
+      });
+    }
+  };
   
   const handleBrandClick = (brand: string) => {
     navigate(`/?brand=${brand}`);
@@ -189,10 +252,17 @@ const Detail = () => {
                     <p className="text-lg mb-6">{notification.message}</p>
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                       <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                          <Heart className="w-4 h-4 mr-1.5" />
+                        <button 
+                          onClick={handleLike}
+                          className={`flex items-center hover:text-foreground transition-colors ${hasLiked ? 'text-red-500 hover:text-red-600' : ''}`}
+                        >
+                          {hasLiked ? (
+                            <HeartFilled className="w-4 h-4 mr-1.5 fill-current" />
+                          ) : (
+                            <Heart className="w-4 h-4 mr-1.5" />
+                          )}
                           <span>{notification.likes || 0} likes</span>
-                        </div>
+                        </button>
                         <div className="flex items-center">
                           <Eye className="w-4 h-4 mr-1.5" />
                           <span>{notification.views || 0} views</span>
