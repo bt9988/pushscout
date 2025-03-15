@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -187,7 +186,7 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
               <ReactCrop 
                 crop={crop} 
                 onChange={c => setCrop(c)}
-                onComplete={(c) => setCompletedCrop(c as PercentCrop)}
+                onComplete={(c) => setCompletedCrop(c)}
                 aspect={undefined}
                 className="max-w-full mx-auto"
               >
