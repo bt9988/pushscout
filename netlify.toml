@@ -1,0 +1,10 @@
+
+# netlify.toml
+# This file tells Netlify how to handle routing for single page applications
+
+# The following redirect is necessary for single page applications using client-side routing
+# It redirects all paths to index.html so that React Router can handle the routing client-side
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
