@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -186,7 +187,25 @@ const ImageCropper = ({ onImageChange }: ImageCropperProps) => {
               <ReactCrop 
                 crop={crop} 
                 onChange={c => setCrop(c)}
-                onComplete={(c) => setCompletedCrop(c)}
+                onComplete={(c) => {
+                  // Ensure we're setting the correct type of crop result
+                  if (c.unit === '%') {
+                    setCompletedCrop(c as PercentCrop);
+                  } else {
+                    // Convert pixel crop to percent crop if needed
+                    const imgElement = imgRef.current;
+                    if (imgElement) {
+                      const percentCrop: PercentCrop = {
+                        unit: '%',
+                        x: (c.x / imgElement.width) * 100,
+                        y: (c.y / imgElement.height) * 100,
+                        width: (c.width / imgElement.width) * 100,
+                        height: (c.height / imgElement.height) * 100
+                      };
+                      setCompletedCrop(percentCrop);
+                    }
+                  }
+                }}
                 aspect={undefined}
                 className="max-w-full mx-auto"
               >
