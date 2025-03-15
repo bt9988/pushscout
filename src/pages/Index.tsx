@@ -27,7 +27,9 @@ const Index = () => {
     const loadData = async () => {
       setIsLoading(true);
       await new Promise(resolve => setTimeout(resolve, 1000));
-      setNotifications(mockNotifications);
+      // Only show approved notifications
+      const approvedNotifications = mockNotifications.filter(n => n.approved);
+      setNotifications(approvedNotifications);
       setRetailers(getUniqueRetailers());
       setIsLoading(false);
     };

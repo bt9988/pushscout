@@ -1,5 +1,6 @@
 import { Notification, Industry, NotificationType } from '@/types';
 
+// Approved notifications
 export let mockNotifications: Notification[] = [
   {
     id: '1',
@@ -12,7 +13,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'sarah.marketing',
     submittedAt: new Date('2023-06-10'),
     likes: 42,
-    views: 1204
+    views: 1204,
+    approved: true
   },
   {
     id: '2',
@@ -25,7 +27,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'james.ecom',
     submittedAt: new Date('2023-06-08'),
     likes: 18,
-    views: 532
+    views: 532,
+    approved: true
   },
   {
     id: '3',
@@ -38,7 +41,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'media.team',
     submittedAt: new Date('2023-06-07'),
     likes: 87,
-    views: 2103
+    views: 2103,
+    approved: true
   },
   {
     id: '4',
@@ -51,7 +55,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'secure.banking',
     submittedAt: new Date('2023-06-05'),
     likes: 12,
-    views: 840
+    views: 840,
+    approved: true
   },
   {
     id: '5',
@@ -64,7 +69,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'marketing.dd',
     submittedAt: new Date('2023-06-04'),
     likes: 56,
-    views: 1876
+    views: 1876,
+    approved: true
   },
   {
     id: '6',
@@ -77,7 +83,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'united.notifications',
     submittedAt: new Date('2023-06-02'),
     likes: 34,
-    views: 921
+    views: 921,
+    approved: true
   },
   {
     id: '7',
@@ -90,7 +97,8 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'tech.updates',
     submittedAt: new Date('2023-06-01'),
     likes: 75,
-    views: 1562
+    views: 1562,
+    approved: true
   },
   {
     id: '8',
@@ -103,37 +111,118 @@ export let mockNotifications: Notification[] = [
     submittedBy: 'health.coach',
     submittedAt: new Date('2023-05-30'),
     likes: 49,
-    views: 1103
+    views: 1103,
+    approved: true
   }
 ];
 
+// Initialize pending notifications array
+export let pendingNotifications: Notification[] = [];
+
+// Add a notification to the pending queue instead of directly to mockNotifications
 export const addNotification = (notification: Notification) => {
-  const newId = String(Math.max(...mockNotifications.map(n => parseInt(n.id))) + 1);
-  notification.id = newId;
+  const newId = String(Math.max(...mockNotifications.map(n => parseInt(n.id)), 
+                         ...pendingNotifications.map(n => parseInt(n.id)), 0) + 1);
   
-  mockNotifications = [notification, ...mockNotifications];
+  notification.id = newId;
+  notification.approved = false; // Mark as unapproved by default
+  
+  pendingNotifications = [notification, ...pendingNotifications];
   
   try {
-    const storedNotifications = localStorage.getItem('pushscout_notifications');
-    const notificationsArray = storedNotifications ? JSON.parse(storedNotifications) : [];
-    notificationsArray.push(notification);
-    localStorage.setItem('pushscout_notifications', JSON.stringify(notificationsArray));
+    // Store pending notifications separately
+    const storedPendingNotifications = localStorage.getItem('pushscout_pending_notifications');
+    const pendingArray = storedPendingNotifications ? JSON.parse(storedPendingNotifications) : [];
+    pendingArray.push(notification);
+    localStorage.setItem('pushscout_pending_notifications', JSON.stringify(pendingArray));
   } catch (error) {
-    console.error('Error saving notification to localStorage:', error);
+    console.error('Error saving pending notification to localStorage:', error);
   }
   
   return notification;
 };
 
+// Approve a notification and move it from pending to approved
+export const approveNotification = (id: string) => {
+  const notificationIndex = pendingNotifications.findIndex(n => n.id === id);
+  
+  if (notificationIndex !== -1) {
+    const notification = pendingNotifications[notificationIndex];
+    notification.approved = true;
+    
+    // Remove from pending
+    pendingNotifications.splice(notificationIndex, 1);
+    
+    // Add to approved
+    mockNotifications = [notification, ...mockNotifications];
+    
+    // Update localStorage
+    try {
+      // Update approved notifications
+      const storedNotifications = localStorage.getItem('pushscout_notifications');
+      const notificationsArray = storedNotifications ? JSON.parse(storedNotifications) : [];
+      notificationsArray.push(notification);
+      localStorage.setItem('pushscout_notifications', JSON.stringify(notificationsArray));
+      
+      // Update pending notifications
+      localStorage.setItem('pushscout_pending_notifications', JSON.stringify(pendingNotifications));
+    } catch (error) {
+      console.error('Error updating localStorage:', error);
+    }
+    
+    return true;
+  }
+  
+  return false;
+};
+
+// Delete a notification (from either pending or approved)
+export const deleteNotification = (id: string) => {
+  // Check pending notifications first
+  const pendingIndex = pendingNotifications.findIndex(n => n.id === id);
+  if (pendingIndex !== -1) {
+    pendingNotifications.splice(pendingIndex, 1);
+    
+    // Update localStorage
+    try {
+      localStorage.setItem('pushscout_pending_notifications', JSON.stringify(pendingNotifications));
+    } catch (error) {
+      console.error('Error updating localStorage:', error);
+    }
+    
+    return true;
+  }
+  
+  // Then check approved notifications
+  const approvedIndex = mockNotifications.findIndex(n => n.id === id);
+  if (approvedIndex !== -1) {
+    mockNotifications.splice(approvedIndex, 1);
+    
+    // Update localStorage
+    try {
+      localStorage.setItem('pushscout_notifications', JSON.stringify(mockNotifications));
+    } catch (error) {
+      console.error('Error updating localStorage:', error);
+    }
+    
+    return true;
+  }
+  
+  return false;
+};
+
+// Load both approved and pending notifications from localStorage
 export const loadStoredNotifications = () => {
   try {
+    // Load approved notifications
     const storedNotifications = localStorage.getItem('pushscout_notifications');
     if (storedNotifications) {
       const parsedNotifications = JSON.parse(storedNotifications);
       
       const processedNotifications = parsedNotifications.map((notification: any) => ({
         ...notification,
-        submittedAt: new Date(notification.submittedAt)
+        submittedAt: new Date(notification.submittedAt),
+        approved: true
       }));
       
       processedNotifications.forEach((notification: Notification) => {
@@ -141,6 +230,20 @@ export const loadStoredNotifications = () => {
           mockNotifications.unshift(notification);
         }
       });
+    }
+    
+    // Load pending notifications
+    const storedPendingNotifications = localStorage.getItem('pushscout_pending_notifications');
+    if (storedPendingNotifications) {
+      const parsedPendingNotifications = JSON.parse(storedPendingNotifications);
+      
+      const processedPendingNotifications = parsedPendingNotifications.map((notification: any) => ({
+        ...notification,
+        submittedAt: new Date(notification.submittedAt),
+        approved: false
+      }));
+      
+      pendingNotifications = processedPendingNotifications;
     }
   } catch (error) {
     console.error('Error loading notifications from localStorage:', error);
@@ -188,5 +291,5 @@ export const getUniqueRetailers = (): string[] => {
 };
 
 export const getNotificationById = (id: string): Notification | undefined => {
-  return mockNotifications.find(n => n.id === id);
+  return mockNotifications.find(n => n.id === id) || pendingNotifications.find(n => n.id === id);
 };

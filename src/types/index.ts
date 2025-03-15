@@ -1,37 +1,37 @@
 
-export type NotificationType = 
-  'promotional' | 
-  'transactional' | 
-  'engagement' | 
-  'informational' | 
-  'update' |
-  'reminder' |
-  'feedback' |
-  'alert' |
-  'onboarding' |
-  'achievement';
-
 export type Industry = 
-  'ecommerce' | 
-  'finance' | 
-  'travel' | 
-  'food' | 
-  'health' | 
-  'technology' | 
-  'entertainment' | 
-  'education' | 
-  'social media' |
-  'fitness' | 
-  'beauty' | 
-  'automotive' | 
-  'real estate' | 
-  'gaming' | 
-  'utilities' | 
-  'non-profit' | 
-  'government' | 
-  'news' | 
-  'sports' |
-  'other';
+  | 'ecommerce' 
+  | 'finance' 
+  | 'travel' 
+  | 'food' 
+  | 'health' 
+  | 'technology' 
+  | 'entertainment' 
+  | 'education' 
+  | 'social media' 
+  | 'fitness' 
+  | 'beauty' 
+  | 'automotive' 
+  | 'real estate' 
+  | 'gaming' 
+  | 'utilities' 
+  | 'non-profit' 
+  | 'government' 
+  | 'news' 
+  | 'sports' 
+  | 'other';
+
+export type NotificationType = 
+  | 'promotional' 
+  | 'transactional' 
+  | 'engagement' 
+  | 'informational' 
+  | 'update' 
+  | 'reminder' 
+  | 'feedback' 
+  | 'alert' 
+  | 'onboarding' 
+  | 'achievement';
 
 export interface Notification {
   id: string;
@@ -41,8 +41,9 @@ export interface Notification {
   retailer: string;
   industry: Industry;
   type: NotificationType;
-  submittedBy?: string;
+  submittedBy: string;
   submittedAt: Date;
-  likes?: number;
-  views?: number;
+  likes: number;
+  views: number;
+  approved?: boolean;
 }

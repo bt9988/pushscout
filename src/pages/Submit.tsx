@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Bell } from 'lucide-react';
-import { industries, notificationTypes, mockNotifications, addNotification } from '@/lib/data';
+import { industries, notificationTypes, addNotification } from '@/lib/data';
 import { Industry, NotificationType, Notification } from '@/types';
 import ImageCropper from '@/components/ImageCropper';
 import BrandAutocomplete from '@/components/BrandAutocomplete';
@@ -89,7 +89,7 @@ const Submit = () => {
     
     try {
       const newNotification: Notification = {
-        id: `${mockNotifications.length + 1}`,
+        id: `temp-${Date.now()}`,
         title: formData.title,
         message: formData.message,
         imageUrl: previewImage || "https://picsum.photos/seed/default/800/600",
@@ -99,17 +99,18 @@ const Submit = () => {
         submittedBy: formData.submittedBy || "Anonymous",
         submittedAt: new Date(),
         likes: 0,
-        views: 1
+        views: 1,
+        approved: false
       };
       
-      // Add the notification to the mockNotifications array
+      // Add the notification to the pendingNotifications array
       addNotification(newNotification);
       
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
         title: "Successfully submitted!",
-        description: "Your notification has been added to the gallery",
+        description: "Your notification has been received and is awaiting approval by an admin.",
       });
       
       navigate('/');
